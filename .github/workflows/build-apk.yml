@@ -1,14 +1,9 @@
-bash
-
-cat /home/claude/FitCoachApp/.github/workflows/build-apk.yml
-Output
-
 name: Build and Release Debug APK
 
-# רץ אוטומטית בכל דחיפה (push) לענף main, וגם ניתן להפעיל ידנית מהטאב Actions בגיטהאב
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -17,6 +12,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -46,7 +42,6 @@ jobs:
           name: "FitCoach - גרסת בדיקה עדכנית"
           body: |
             APK שנבנה אוטומטית מה-commit האחרון.
-            הורד את הקובץ FitCoach-debug.apk למטה, פתח אותו בטלפון והתקן.
-            זהו build לבדיקה בלבד (לא חתום לחנות), לכן ייתכן שהטלפון יזהיר לפני ההתקנה - זה תקין.
+            הורד את הקובץ FitCoach-debug.apk למטה והתקן בטלפון.
           files: app/build/outputs/apk/debug/FitCoach-debug.apk
           make_latest: true
