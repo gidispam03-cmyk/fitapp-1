@@ -1,0 +1,47 @@
+name: Build and Release Debug APK
+
+# רץ אוטומטית בכל דחיפה (push) לענף main, וגם ניתן להפעיל ידנית מהטאב Actions בגיטהאב
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build debug APK
+        run: gradle assembleDebug --stacktrace
+
+      - name: Rename APK for clarity
+        run: mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/FitCoach-debug.apk
+
+      - name: Publish APK as a GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-build
+          name: "FitCoach - גרסת בדיקה עדכנית"
+          body: |
+            APK שנבנה אוטומטית מה-commit האחרון.
+            הורד את הקובץ FitCoach-debug.apk למטה, פתח אותו בטלפון והתקן.
+            זהו build לבדיקה בלבד (לא חתום לחנות), לכן ייתכן שהטלפון יזהיר לפני ההתקנה - זה תקין.
+          files: app/build/outputs/apk/debug/FitCoach-debug.apk
+          make_latest: true
